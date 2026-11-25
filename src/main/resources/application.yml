@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            # Time to open the connection to a destination, in milliseconds. The time to answer is set per route.
+            connect-timeout: 2000
+          metrics:
+            enabled: true
+
+# Only the gateway's own state: it never publishes anything of a destination, and the ingress does not route here.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  structured:
+    format:
+      console: logstash
+
+# The route table (specs/LAB-107). Every route goes to the monolith until its uri is set, for example with
+# SHOPLAB_GATEWAY_ROUTES_DOCUMENTS_URI=http://retrieval-service:8080. A new prefix needs only
+# SHOPLAB_GATEWAY_ROUTES_<NAME>_PREFIX and _URI.
+shoplab:
+  gateway:
+    monolith-uri: ${GATEWAY_MONOLITH_URI:http://localhost:8081}
+    default-response-timeout: 120s
+    routes:
+      chat:
+        prefix: /api/chat
+      documents:
+        prefix: /api/documents
+      knowledge:
+        prefix: /api/knowledge
+      eval:
+        prefix: /api/eval
+      assistant:
+        prefix: /api/assistant

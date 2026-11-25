@@ -1,0 +1,16 @@
+version: "1.0"
+
+linter: qodana-jvm-community
+
+profile:
+  name: qodana.recommended
+
+exclude:
+  - name: All
+    paths:
+      - target
+
+failureConditions:
+  severityThresholds:
+    critical: 0
+    high: 0
