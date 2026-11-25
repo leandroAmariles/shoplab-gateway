@@ -1,6 +1,7 @@
 version: "1.0"
 
-linter: qodana-jvm-community
+# Full image name: the Qodana action pinned by shoplab-ci@v1 does not resolve the short name.
+linter: jetbrains/qodana-jvm-community:2024.2
 
 profile:
   name: qodana.recommended
