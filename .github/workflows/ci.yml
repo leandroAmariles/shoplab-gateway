@@ -17,6 +17,19 @@ jobs:
       java-version: '21'
       coverage-threshold: 80
       image-name: 'ghcr.io/leandroamariles/gateway'
-      publish-image: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      # Published by the job below: through java-service.yml the signature check always fails (see there).
+      publish-image: false
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # publish-image.yml verifies the signature against "github.com/<repository owner>/", which is case sensitive, and the
+  # certificate carries the path exactly as written in "uses:". It must be spelled leandroAmariles, as the owner is;
+  # java-service.yml@v1 calls it in lower case.
+  publish:
+    needs: pipeline
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: leandroAmariles/shoplab-ci/.github/workflows/publish-image.yml@v1
+    with:
+      image-name: 'ghcr.io/leandroamariles/gateway'
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
